@@ -5,6 +5,7 @@ try: # Импорт библиотек
     import os
     from random import randint
     from telegram import Bot # pip install python-telegram-bot
+    from telegram.ext import Application, MessageHandler, filters
 except Exception as e: input('\rКритическая ошибка:', e); quit()
 else: print('\rИмпорт библиотек завершён.')
 
@@ -15,7 +16,7 @@ KEY = False # Описание ниже | The description is below
 # Напишите KEY = {ключ}, если хотите, чтобы программа не искала ключ в файлах
 # Write KEY = False if you want the program to find the key in C:\MichiPythonFiles\GreenTeaBot\key
 # Write KEY = {key} if you want the program not to search for the key in the files
-CHANNEL_ID = '-1002622534151' # Поменяйте на свой | Swap it for your own
+ID = -1002622534151 # Поменяйте на свой | Swap it for your own
 
 
 # Достать ключ
@@ -34,11 +35,29 @@ if not KEY:
 
 
 # Основной цикл
-async def send_post_with_comment():
-    bot = Bot(token=KEY)
-    await bot.send_message(
-            chat_id=CHANNEL_ID,
-            text="Hello World!"
-        )
+async def handle_message(update, context):
+    if update.message.chat_id != ID:
+        return
 
-asyncio.run(send_post_with_comment())
+    user_text = update.message.text
+    if not user_text:
+        return
+
+    reply_text = f"Вы написали: {user_text}"
+
+    await update.message.reply_text(reply_text)
+
+def main():
+    application = Application.builder().token(KEY).build()
+
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
+
+    print("Бот запущен и слушает сообщения в группе...")
+    application.run_polling()
+
+
+main()
+
+
+# >> https://t.me/c/2622534151/20065
+# > Сначала научился писать сообщение в чат, потом научился доставать сообщения и возвращать их с ответом.. Теперь осталось подключить Ollama  и дописать рандом
