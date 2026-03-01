@@ -6,7 +6,7 @@ try: # Импорт библиотек
     from telegram import Bot # pip install python-telegram-bot
     from telegram.ext import Application, MessageHandler, filters
     from datetime import datetime
-except Exception as e: input('\rКритическая ошибка:', e); quit()
+except Exception as e: input(f'\rКритическая ошибка: {e}'); quit()
 else: print('\rИмпорт библиотек завершён.')
 
 
@@ -32,7 +32,7 @@ if not KEY:
         with open('C:/MichiPythonFiles/GreenTeaBot/key', 'w', encoding='utf-8') as f:
             f.write('Напишите свой ключ здесь | Write your key here')
         input(f'\rКритическая ошибка: {e}\nНо папка была создана в деректории C:/MichiPythonFiles/GreenTeaBot/key')
-        quit
+        quit()
     else: print('\rУспешно достали ключ.')
 
 
@@ -54,7 +54,7 @@ except Exception as e:
     старайся не форматировать текст в markdown, не считая _курсива_, **жирного шрифта**, ||спойлеров|| или `моно шрифта` - другой текст банально не форматируется
 
     Знай, что ты видишь в истории только системный промпт и случайное сообщение из чата - остальной памяти у тебя нет''')
-    input(f'\rКритическая ошибка: {e}\nНо был создан промпт'); quit
+    input(f'\rКритическая ошибка: {e}\nНо был создан промпт'); quit()
 else: print('\rЗагрузка промпта завершена.')
 
 
@@ -84,10 +84,12 @@ async def handle_message(update, context):
             user_text = update.message.text
             if not user_text:
                 return
+            if update.message.from_user.is_bot:
+                return
             print(f'  Содержание: {user_text}'); logs(f'> Содержание: {user_text}')
             response = ollama.chat(model=MODEL, messages=[{'role': 'system', 'content': prompt}, {'role': 'user', 'content': user_text}])
             await update.message.reply_text(response['message']['content'])
-            print(f'< ИИ: {response['message']['content']}'); logs(f'ИИ: {response['message']['content']}')
+            print(f"< ИИ: {response['message']['content']}"); logs(f"ИИ: {response['message']['content']}")
         except Exception as e: print('< Ошибка:', e); logs((f'< Ошибка: {e}'))
     else: print(f'< Сообщение осталось без ответа, выпало: {_}'); logs('< Сообщение осталось без ответа')
 
