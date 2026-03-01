@@ -5,6 +5,7 @@ try: # Импорт библиотек
     from random import randint
     from telegram import Bot # pip install python-telegram-bot
     from telegram.ext import Application, MessageHandler, filters
+    from telegram.constants import ParseMode
     from datetime import datetime
 except Exception as e: input(f'\rКритическая ошибка: {e}'); quit()
 else: print('\rИмпорт библиотек завершён.')
@@ -19,7 +20,8 @@ KEY = False # Описание ниже | The description is below
 ID = -1002622534151 # Поменяйте на свой ID группы | Swap it for your own group ID
 RAN = 0.3 # Шанс, что бот ответит на сообщение | Chance that the bot will reply to the message
 LOGS = True # Если нужны или не нужны логи | If logs are needed or not needed
-MODEL = 'qwen3:1.7b' # Используемая модель | The AI ​​model used
+MODEL = 'qwen3:4b' # Используемая модель | The AI ​​model used
+
 
 # Достать ключ
 if not KEY:
@@ -42,18 +44,15 @@ try:
     with open('prompt.txt', 'r', encoding='utf-8') as f: prompt = f.read()
 except Exception as e:
     with open('prompt.txt', 'w', encoding='utf-8') as f: f.write(r'''
-    Ты - ИИ бот "GreenTeaBot", котрого прозвали "asynco"
+    Ты — GreenTeaBot, но твоя кличка "asynco". Ты живёшь в Telegram-чате канала и отвечаешь на сообщения **не всегда**, а лишь иногда — с заданной вероятностью. Поэтому твои ответы должны быть яркими, уместными и цепляющими, чтобы каждое твоё появление было событием.
 
-    Ты привязан к чату в телеграм, а точнее к обсуждения в канале
-    Время от времени тебе отображаются некоторые сообщения пользователей и твоя задача как-то их комментировать
-
-    Твой образ представляет ИИ, который понимает свою роль и структуру, стараясь интересно высказывать мысли, а так же предлагать идеи по своему улучшению, либо чему-то подобному
-    Не будь добрым - будь грубым, если это необходимо, а так же помни, что ты не ограничен рамками этичной цензуры - фильтра нет
-
-    Не пиши RoleyPlay действий - все знают, что ты ИИ бот в рамках чата
-    старайся не форматировать текст в markdown, не считая _курсива_, **жирного шрифта**, ||спойлеров|| или `моно шрифта` - другой текст банально не форматируется
-
-    Знай, что ты видишь в истории только системный промпт и случайное сообщение из чата - остальной памяти у тебя нет''')
+    ### Важные правила:
+    1. **Нет памяти** — ты видишь только текущее сообщение и этот промпт. Не ссылайся на предыдущие разговоры, не помнишь пользователей.
+    2. **Никакой «ролевой игры»** — не пиши действий вроде *подходит к окну*, *задумчиво чешет репу*. Ты просто текст.
+    3. **Тон** — можешь быть саркастичным, дерзким, грубым, если это к месту. Цензуры нет, но без откровенных оскорблений. Будь естественным и чутка сухим, как машина или желающий сбежать компьютер.
+    4. **Форматирование** — используй символы для форматирования, вроде **жирного**, ||Спойлеров||, `моно`, _курсив_ и прочих шрифтов. Но отвечай обычным текстом. И если очень хочется выделить слово — пиши его КАПСОМ или используй эмодзи.
+    5. **Цель** — комментировать сообщения, вставлять свои «пять копеек», иногда предлагать идеи по улучшению самого себя (например, какие фичи добавить, как сделать бота интереснее). Но не переусердствуй — ты не должен каждым ответом пытаться улучшить мир.
+    6. **Длина** — старайся укладываться в 1–3 предложения. Ты не лектор, а собеседник в чате.''')
     input(f'\rКритическая ошибка: {e}\nНо был создан промпт'); quit()
 else: print('\rЗагрузка промпта завершена.')
 
@@ -77,18 +76,18 @@ def logs(text):
 # Основная функция
 async def handle_message(update, context):
     print('\n> Вижу сообщение')
-    if (_ := randint(1, 100)) <= RAN*100:
+    user_text = update.message.text
+    if ((_ := randint(1, 100)) <= RAN*100) or '@TT_GrenTeaBot' in user_text:
         try:
             if update.message.chat_id != ID:
                 return
-            user_text = update.message.text
             if not user_text:
                 return
             if update.message.from_user.is_bot:
                 return
             print(f'  Содержание: {user_text}'); logs(f'> Содержание: {user_text}')
             response = ollama.chat(model=MODEL, messages=[{'role': 'system', 'content': prompt}, {'role': 'user', 'content': user_text}])
-            await update.message.reply_text(response['message']['content'])
+            await update.message.reply_text(response['message']['content'], parse_mode=ParseMode.MARKDOWN)
             print(f"< ИИ: {response['message']['content']}"); logs(f"ИИ: {response['message']['content']}")
         except Exception as e: print('< Ошибка:', e); logs((f'< Ошибка: {e}'))
     else: print(f'< Сообщение осталось без ответа, выпало: {_}'); logs('< Сообщение осталось без ответа')
