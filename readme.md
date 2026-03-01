@@ -24,6 +24,11 @@
 
 4. Когда выпадает 0, то функция передаёт запрос [`Ollma`](https://github.com/ollama/ollama) и заставляет выбранную модель генерировать ответ
 
+---
+**Для работы | For works**
+```bash
+pip install python-telegram-bot ollama
+```
 
 # English | Английский
 ## Tasks
