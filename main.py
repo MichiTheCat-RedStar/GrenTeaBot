@@ -92,7 +92,10 @@ async def handle_message(update, context):
             if (update.message.chat_id != ID) or (not user_text):
                 return
             print('  Генерация ответа...')
-            response = ollama.chat(model=MODEL, messages=[{'role': 'system', 'content': prompt}, {'role': 'user', 'content': user_text}], options={'num_predict': 4096})
+            user = update.message.from_user
+            first_name = user.first_name
+            logs(f'Имя пользователя: {first_name}')
+            response = ollama.chat(model=MODEL, messages=[{'role': 'system', 'content': prompt}, {'role': 'user', 'content': f'{first_name}:\n{user_text}'}], options={'num_predict': 4096})
             response = str(response['message']['content'])
             try:
                 if ('<' in response) and ('>' in response): # попытка понять, что это HTML
@@ -103,7 +106,7 @@ async def handle_message(update, context):
                 await update.message.reply_text(f'{response}')
             print(f'< ИИ: {response}'); logs(f'ИИ: {response}')
         except Exception as e: print('< Ошибка:', e); logs((f'< Ошибка: {e}'))
-    else: print(f'< Сообщение осталось без ответа'); logs('< Сообщение осталось без ответа')
+    else: print(f'< Сообщение осталось без ответа, содержание: {user_text}'); logs(f'< Сообщение осталось без ответа, содержание: {user_text}')
 
 
 # Основной цикл/инициализация
