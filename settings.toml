@@ -1,27 +1,37 @@
 [Bot]
-                        # Вставить ключ или директорию (только для Windows) | Insert key or directory (Windows only)
-Key = false             # Описание ниже | The description is below
-                        # Напишите Key = false, если хотите, чтобы программа нашла ключ в C:\MichiPythonFiles\GreenTeaBot\key
-                        # Напишите Key = {ключ}, если хотите, чтобы программа не искала ключ в файлах
-                        # Write Key = false if you want the program to find the key in C:\MichiPythonFiles\GreenTeaBot\key
-                        # Write Key = {key} if you want the program not to search for the key in the files
-ID = -1002622534151     # Поменяйте на свой ID группы | Swap it for your own group ID
-Random = 0.15           # Шанс, что бот ответит на сообщение | Chance that the bot will reply to the message
+Key = false
+# ├ Укажите ключ в формате Key = "ваш_ключ" или оставьте false, чтобы код был взят из файла key в папке C:/MichiPythonFiles/GreenTeaBot/
+# └ Specify the key in the format Key = "your_key" or leave false so that the code is taken from the key file in the folder C:/MichiPythonFiles/GreenTeaBot/
+ID = -1002622534151
+# ├ Укажите ID своего чата, откуда бы бот брал сообщения и общался
+# └ Specify your chat ID, from where the bot would receive messages and communicate
+BotUsername = "TT_GrenTeaBot"
+# ├ Тег вашего бота
+# └ Your bot's tag
+Random = 0.15
+# ├ Укажите число от 0.0 до 1.0 - это будет шанс от 0% до 100% на ответ на сообщения
+# └ Specify a number from 0.0 to 1.0 - this will be a 0% to 100% chance of responding to messages
 
 [Ollama]
-Model = "gpt-oss:20b"   # Используемая модель | The AI ​​model used
-CPU = false             # Количество используемых ядер | Number of cores in use
-Prompt = "Prompt-8b+RU" # Выберите из: | Choose from:
-                        #   Prompt-8b+RU - для больших моделей с поддержкой русского | Prompt-8b+RU - for large models with Russian support
-                        #   Prompt-4b-RU - для маленьких моделей с поддержкой русского | Prompt-4b-RU - for small models with Russian support
-                        #   Prompt-8b+EN - для больших моделей без поддержки русского | Prompt-8b+EN - for large models without Russian support
-                        #   Prompt-4b-EN - для маленьких моделей без поддержки русского | Prompt-4b-EN - for small models without Russian support
+Model = "gpt-oss:20b"
+# ├ Укажите используемую модель ИИ (она должна быть установлена в заранее)
+# └ pecify the AI model used (it must be installed in advance)
+CPU = false
+# ├ Сколько потоков процессора будет использовано
+# └ How many CPU threads will be used
+Prompt = "Prompt-8b+RU"
+# ├ Выберите один из промптов в папке prompts или создайте свой (подробнее в readme.txt)
+# └ Select one of the prompts in the prompts folder or create your own (for more information, see readme.txt)
 
 [Script]
-Logs = true             # Если нужны или не нужны логи | If logs are needed or not needed
+Logs = true
+# ├ Включает логирование действий
+# └ Enables logging of actions
 
 [Translation]
-Translate = false       # Включить перевод на язык пользователя | Enable translation into the user's language
-UserLanguage = "RU"     # Какой у пользователя язык? | What is the user's language?
-
-# TODO не забыть исправить описания, чтобы пользоватлеь понял что тут есть что, а то сейчас слишком усложнено (например с тем же KEY или Prompt)
+Translate = false
+# ├ Включает переводчик по системе 'Выбранный язык'->'Английский'(так как ИИ обучены в основном на нём)->'Выбранный язык' (полезно для работы с маленькими моделями, так как куда больше англоязычных моделей под 1b и их проще переводить таким образом)
+# └ Enables the translator on the system 'Selected language'->'English'(since AI is mainly trained on it)->'Selected language' (useful for working with small models, as there are many more English-language models for 1b and they are easier to translate this way)
+UserLanguage = "RU"
+# ├ Какой именно язык будет выбран, если параметр сверху истина ('true')
+# └ Which language will be selected if the upper parameter is 'true'

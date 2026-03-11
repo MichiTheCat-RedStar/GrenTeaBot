@@ -1,0 +1,3 @@
+Вы можете создать здесь файл для промпта и в settings.toml указать его, он будет выбран... Либо вы можете создать свой промпт с нуля, создав пустой файл .txt, дав своё название и вставив в него свой промпт на удобном для вас языке (желательно английский, ведь ИИ почти всегда тренеруются на нём)
+
+You can create a file for prompta here and specify it in settings.toml, it will be selected... Alternatively, you can create your own prompt from scratch by creating an empty file.txt, by giving your name and inserting your prompt into it in a language that is convenient for you (preferably English, because AI is almost always trained in it)
