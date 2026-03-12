@@ -7,7 +7,8 @@ try: # Импорт библиотек
     from telegram.ext import Application, MessageHandler, filters
     from telegram.constants import ParseMode
     from datetime import datetime
-    import tomllib
+    try: import tomllib
+    except ModuleNotFoundError: import tomli as tomllib; print('\rtomlib заменён на tomli.') # pip install tomli если ваш python не имеет tomlib
 except Exception as e: input(f'\rКритическая ошибка: {e}'); quit()
 else: print('\rИмпорт библиотек завершён.')
 
@@ -86,34 +87,36 @@ def logs(text):
 
 # Основная функция
 async def handle_message(update, context):
-    print('\n> Вижу сообщение')
     try:
-        user_text = update.message.text
-        user = update.message.from_user
-        first_name = user.first_name
-        print('  Сообщение от', first_name)
-    except: pass
-    if (randint(1, 100) <= RAN*100) or (f'@{BOT}' in user_text):
+        print('\n> Вижу сообщение')
         try:
-            print(f'  Содержание: {user_text}'); logs(f'> Содержание: {user_text}')            
-            if (update.message.chat_id != ID) or (not user_text):
-                return
-            print('  Генерация ответа...')
+            user_text = update.message.text
             user = update.message.from_user
             first_name = user.first_name
-            logs(f'Имя пользователя: {first_name}')
-            response = ollama.chat(model=MODEL, messages=[{'role': 'system', 'content': prompt}, {'role': 'user', 'content': user_text}], options={'num_predict': 4096, "num_thread": CPU})
-            response = str(response['message']['content'])
+            print('  Сообщение от', first_name)
+        except: user_text = ''
+        if (randint(1, 100) <= RAN*100) or (f'@{BOT}' in user_text):
             try:
-                if any(tag in response for tag in ['<b>', '<i>', '<u>', '<s>', '<a', '<code>', '<pre>']): # попытка понять, что это HTML
-                    await update.message.reply_text(response, parse_mode=ParseMode.HTML)
-                else:
-                    await update.message.reply_text(response, parse_mode=ParseMode.MARKDOWN)
-            except:
-                await update.message.reply_text(response)
-            print(f'< ИИ: {response}'); logs(f'ИИ: {response}')
-        except Exception as e: print('< Ошибка:', e); logs(f'< Ошибка: {e}')
-    else: print(f'< Сообщение осталось без ответа, содержание: {user_text}'); logs(f'< Сообщение осталось без ответа, содержание: {user_text}')
+                print(f'  Содержание: {user_text}'); logs(f'> Содержание: {user_text}')            
+                if (update.message.chat_id != ID) or (not user_text):
+                    return
+                print('  Генерация ответа...')
+                user = update.message.from_user
+                first_name = user.first_name
+                logs(f'Имя пользователя: {first_name}')
+                response = ollama.chat(model=MODEL, messages=[{'role': 'system', 'content': prompt}, {'role': 'user', 'content': user_text}], options={'num_predict': 4096, "num_thread": CPU})
+                response = str(response['message']['content'])
+                try:
+                    if any(tag in response for tag in ['<b>', '<i>', '<u>', '<s>', '<a', '<code>', '<pre>']): # попытка понять, что это HTML
+                        await update.message.reply_text(response, parse_mode=ParseMode.HTML)
+                    else:
+                        await update.message.reply_text(response, parse_mode=ParseMode.MARKDOWN)
+                except:
+                    await update.message.reply_text(response)
+                print(f'< ИИ: {response}'); logs(f'ИИ: {response}')
+            except Exception as e: print('< Ошибка:', e); logs(f'< Ошибка: {e}')
+        else: print(f'< Сообщение осталось без ответа, содержание: {user_text}'); logs(f'< Сообщение осталось без ответа, содержание: {user_text}')
+    except Exception as e: logs(f'Критическая ошибка:\n{e}')
 
 
 # Основной цикл/инициализация
