@@ -19,7 +19,7 @@ Model = "gpt-oss:20b"
 CPU = false
 # ├ Сколько потоков процессора будет использовано
 # └ How many CPU threads will be used
-Prompt = "Prompt-8b+RU"
+Prompt = "GTB-Prompt-8b-RU"
 # ├ Выберите один из промптов в папке prompts или создайте свой (подробнее в readme.txt)
 # └ Select one of the prompts in the prompts folder or create your own (for more information, see readme.txt)
 
@@ -32,6 +32,8 @@ Logs = true
 Translate = false
 # ├ Включает переводчик по системе 'Выбранный язык'->'Английский'(так как ИИ обучены в основном на нём)->'Выбранный язык' (полезно для работы с маленькими моделями, так как куда больше англоязычных моделей под 1b и их проще переводить таким образом)
 # └ Enables the translator on the system 'Selected language'->'English'(since AI is mainly trained on it)->'Selected language' (useful for working with small models, as there are many more English-language models for 1b and they are easier to translate this way)
-UserLanguage = "RU"
+Engien = "Google"
+# └ Google|DeepL|Amazon|ModernMT|LibreTranslate
+UserLanguage = "ru"
 # ├ Какой именно язык будет выбран, если параметр сверху истина ('true')
 # └ Which language will be selected if the upper parameter is 'true'

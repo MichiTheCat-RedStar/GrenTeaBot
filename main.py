@@ -1,3 +1,5 @@
+VERSION = 'v1.3b'
+
 try: # Импорт библиотек
     print('Импорт библиотек...', end='', flush=True)
     import ollama # pip install ollama
@@ -57,8 +59,7 @@ if not KEY:
     else: input(f'\rВставьте ключ в settings.toml в переменную Key = "ваш_ключ"'); quit()
 
 
-# Достаётся промпт
-try:
+try: # Достаётся промпт
     print('Загружается промпт...', end='', flush=True)
     with open(f'prompts/{prompt}.txt', 'r', encoding='utf-8') as f: prompt = f.read()
 except Exception as e: input(f'\rКритическая ошибка: {e}'); quit()
@@ -67,6 +68,34 @@ else: print('\rЗагрузка промпта завершена.')
 
 # Проверяею ядра
 if not CPU: CPU = None
+
+
+# Never Wanted To Dance !!!
+# Сколько я библиотек не перебирал, сменив уже три - везде либо документация устаревшая и сейчас работает вообще не так модуль, либо ошибка 502, либо "Слишком много запросов", когда он единственный.. Короче я выгорел
+# То, что вы видите ниже - это конечно не код, который был изначально, тут сборная солянка из теста трёх библиотек, поэтому это и выглядит так... Хотя не работает оно вообще никак даже в исправленном виде
+r'''
+translation['Translate'] = True
+try: # Инициализируется переводчик
+    if translation['Translate']:
+        print('Загружается переводчик...', end='', flush=True)
+        import translators as translator
+        print(translator.translate_text('Привет'))
+        if translation['Engien'] == 'Google':
+            def translate(text, lang): return translator.google(text, lang)
+        elif translation['Engien'] == 'DeepL':
+            def translate(text, lang): return translator.deepl(text, lang)
+        elif translation['Engien'] == 'Amazon':
+            def translate(text, lang): return translator.amazon(text, lang)
+        elif translation['Engien'] == 'ModernMT':
+            def translate(text, lang): return translator.modern_mt(text, lang)
+        elif translation['Engien'] == 'LibreTranslate':
+            def translate(text, lang): return translator.libre(text, lang)
+        else: input(f'\rДвижок переводчика задан неправильно.'); quit()
+except Exception as e: input(f'\rКритическая ошибка: {e}'); quit()
+else: print('\rЗагрузка переводчика завершена.')
+
+print(translate('Привет, Мир!', 'en'))
+quit()'''
 
 
 # Создаю логи
@@ -116,14 +145,14 @@ async def handle_message(update, context):
                 print(f'< ИИ: {response}'); logs(f'ИИ: {response}')
             except Exception as e: print('< Ошибка:', e); logs(f'< Ошибка: {e}')
         else: print(f'< Сообщение осталось без ответа, содержание: {user_text}'); logs(f'< Сообщение осталось без ответа, содержание: {user_text}')
-    except Exception as e: logs(f'Критическая ошибка:\n{e}')
+    except Exception as e: logs(f'Критическая ошибка:\n{e}'); input(f'\nКритическая ошибка:\n{e}')
 
 
 # Основной цикл/инициализация
-logs(f'Настройки:\nШанс = {RAN*100}%\nМодель = {MODEL}\nЯдер = {CPU}\nWindows = {isWindows}')
+logs(f'Версия: {VERSION}\n\nНастройки:\nШанс = {RAN*100}%\nМодель = {MODEL}\nЯдер = {CPU}\nWindows = {isWindows}')
 application = Application.builder().token(KEY).build()
 application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-print('Бот запущен...'); logs('Бот запущен')
+print('Бот запущен...\nВерсия', VERSION); logs('Бот запущен')
 application.run_polling()
 
 
@@ -137,3 +166,4 @@ application.run_polling()
 # [Сделано] Исправить readme.md
 # [Сделано] Добавить натсройку BotUsername = "TT_GrenTeaBot"
 # [Сделано] Прочитать TODO из settings.toml
+#   Сделать TODO 3
