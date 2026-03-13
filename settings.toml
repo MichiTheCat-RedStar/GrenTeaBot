@@ -22,6 +22,9 @@ CPU = false
 Prompt = "GTB-Prompt-8b-RU"
 # ├ Выберите один из промптов в папке prompts или создайте свой (подробнее в readme.txt)
 # └ Select one of the prompts in the prompts folder or create your own (for more information, see readme.txt)
+History = 5
+# ├ Сколько сообщений будет запоминать бот для контекста
+# └ How many messages will the bot remember for context
 
 [Script]
 Logs = true

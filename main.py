@@ -28,6 +28,7 @@ try: # Импор settings.toml
         prompt = data['Ollama']['Prompt']
         translation = data['Translation'] # TODO: сделать функцию перевода
         BOT = data['Bot']['BotUsername']
+        HISTORY = data['Ollama']['History']
     # Все настройки были перенесены в файл settings.toml
     # All settings have been moved to the settings.toml file
 except Exception as e: input(f'\rКритическая ошибка: {e}'); quit()
@@ -68,6 +69,10 @@ else: print('\rЗагрузка промпта завершена.')
 
 # Проверяею ядра
 if not CPU: CPU = None
+
+
+# История
+history = []
 
 
 # Never Wanted To Dance !!!
@@ -133,7 +138,10 @@ async def handle_message(update, context):
                 user = update.message.from_user
                 first_name = user.first_name
                 logs(f'Имя пользователя: {first_name}')
-                response = ollama.chat(model=MODEL, messages=[{'role': 'system', 'content': prompt}, {'role': 'user', 'content': user_text}], options={'num_predict': 4096, "num_thread": CPU})
+                # full_history = [{'role': 'system', 'content': prompt}, history, {'role': f'user "{first_name}"', 'content': user_text}]
+                full_history = [{'role': 'system', 'content': prompt}, {'role': 'user', 'content': user_text}]
+                response = ollama.chat(model=MODEL, messages=full_history, options={'num_predict': 4096, "num_thread": CPU})
+                logs(f'ИИ внутрянка: {response}')
                 response = str(response['message']['content'])
                 try:
                     if any(tag in response for tag in ['<b>', '<i>', '<u>', '<s>', '<a', '<code>', '<pre>']): # попытка понять, что это HTML
