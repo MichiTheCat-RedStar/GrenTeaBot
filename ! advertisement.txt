@@ -1,0 +1,6 @@
+Пожалуйста, оцените мой проект в папке со старыми проектами, так как это мой аналог BrainFuck на Python, для которого я не вижу смысла создавать отдельный репозиторий и поэтому прошу здесь!
+
+(v2.0) https://github.com/MichiTheCat-RedStar/Small_Projects/tree/main/oldProjects/BrainFun%20(v2.0)
+(v1.7) https://github.com/MichiTheCat-RedStar/Small_Projects/tree/main/oldProjects/BrainFun%20(v1.7)
+
+Please rate my project in the old projects folder, as this is my BrainFuck analogue in Python, for which I don't see the point in creating a separate repository and therefore ask here!
