@@ -19,7 +19,7 @@ Model = "gpt-oss:20b"
 CPU = false
 # ├ Сколько потоков процессора будет использовано
 # └ How many CPU threads will be used
-Prompt = "GTB-Prompt-8b-RU"
+Prompt = "exp(names)-GTB-Prompt-8b-RU"
 # ├ Выберите один из промптов в папке prompts или создайте свой (подробнее в readme.txt)
 # └ Select one of the prompts in the prompts folder or create your own (for more information, see readme.txt)
 History = 5
@@ -40,3 +40,8 @@ Engien = "Google"
 UserLanguage = "ru"
 # ├ Какой именно язык будет выбран, если параметр сверху истина ('true')
 # └ Which language will be selected if the upper parameter is 'true'
+
+[Experimental]
+ExperimentalMode = true
+# ├ Экспериментальный режим
+# └ Experimental mode

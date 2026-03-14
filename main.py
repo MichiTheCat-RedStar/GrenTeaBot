@@ -1,4 +1,4 @@
-VERSION = 'v1.3b'
+VERSION = 'v1.3c'
 
 try: # Импорт библиотек
     print('Импорт библиотек...', end='', flush=True)
@@ -25,10 +25,11 @@ try: # Импор settings.toml
         LOGS = data['Script']['Logs']
         MODEL = data['Ollama']['Model']
         CPU = data['Ollama']['CPU']
-        prompt = data['Ollama']['Prompt']
+        PROMPT = data['Ollama']['Prompt']
         translation = data['Translation'] # TODO: сделать функцию перевода
         BOT = data['Bot']['BotUsername']
         HISTORY = data['Ollama']['History']
+        EXP_MODE = data['Experimental']['ExperimentalMode']
     # Все настройки были перенесены в файл settings.toml
     # All settings have been moved to the settings.toml file
 except Exception as e: input(f'\rКритическая ошибка: {e}'); quit()
@@ -62,7 +63,7 @@ if not KEY:
 
 try: # Достаётся промпт
     print('Загружается промпт...', end='', flush=True)
-    with open(f'prompts/{prompt}.txt', 'r', encoding='utf-8') as f: prompt = f.read()
+    with open(f'prompts/{PROMPT}.txt', 'r', encoding='utf-8') as f: prompt = f.read()
 except Exception as e: input(f'\rКритическая ошибка: {e}'); quit()
 else: print('\rЗагрузка промпта завершена.')
 
@@ -129,6 +130,10 @@ async def handle_message(update, context):
             first_name = user.first_name
             print('  Сообщение от', first_name)
         except: user_text = ''
+        if EXP_MODE:
+            if first_name == 'Group': first_name = 'Администратор'
+            history.append({'role': 'user', 'content': f'{first_name}: {user_text}'})
+            if len(history) > HISTORY: history.pop(0)
         if (randint(1, 100) <= RAN*100) or (f'@{BOT}' in user_text):
             try:
                 print(f'  Содержание: {user_text}'); logs(f'> Содержание: {user_text}')            
@@ -138,11 +143,21 @@ async def handle_message(update, context):
                 user = update.message.from_user
                 first_name = user.first_name
                 logs(f'Имя пользователя: {first_name}')
-                # full_history = [{'role': 'system', 'content': prompt}, history, {'role': f'user "{first_name}"', 'content': user_text}]
-                full_history = [{'role': 'system', 'content': prompt}, {'role': 'user', 'content': user_text}]
+                # Как пометить пользователя? Как их разделять? Я могу достать ник персонажа, но как их отличать?
+                # 1. Писать в роль имя пользователя? ИИ не реагирует, так как думает, что это не пользователь, не говоря о том, что пользователь может поставить себе ник "system"
+                # 2. Писать "user: {first_name}"? ИИ не отвечает, так как не воспринимает "user: кто-то" как "user"
+                # 3. Писать отдельным системным промптом "Тебе сейчас напишет {first_name}"? Это лишний раз увеличивает историю и при этом ИИ не реагирует на это правильно
+                # full_history = [{'role': 'system', 'content': PROMPT}, history, {'role': f'user "{first_name}"', 'content': user_text}]
+                # В итоге я что-то придумал
+                if EXP_MODE:
+                    full_history = [{'role': 'system', 'content': PROMPT}]
+                    full_history += history
+                else:
+                    full_history = [{'role': 'system', 'content': PROMPT}, {'role': 'user', 'content': user_text}]
                 response = ollama.chat(model=MODEL, messages=full_history, options={'num_predict': 4096, "num_thread": CPU})
                 logs(f'ИИ внутрянка: {response}')
                 response = str(response['message']['content'])
+                if EXP_MODE: history.append({'role': 'assistant', 'content': response})
                 try:
                     if any(tag in response for tag in ['<b>', '<i>', '<u>', '<s>', '<a', '<code>', '<pre>']): # попытка понять, что это HTML
                         await update.message.reply_text(response, parse_mode=ParseMode.HTML)
@@ -157,6 +172,15 @@ async def handle_message(update, context):
 
 
 # Основной цикл/инициализация
+if EXP_MODE:
+    print('\nНажмите [1] и/или [ENTER], чтобы запустить бота\nВведите <help> для помощи')
+    while True:
+        userInput = input('\nGrenTeaBot/main.py> ').lower()
+        if userInput == 'help': print('help - помощь\nexit - выйти\nstart - запустить бота\nversion - версия')
+        elif (userInput == '1') or (userInput == '') or (userInput == 'start'): break
+        elif userInput == 'exit': quit()
+        elif userInput == 'version': print(f'Версия: {VERSION}')
+        else: print(f'Нет команды "{userInput}" среди команд')
 logs(f'Версия: {VERSION}\n\nНастройки:\nШанс = {RAN*100}%\nМодель = {MODEL}\nЯдер = {CPU}\nWindows = {isWindows}')
 application = Application.builder().token(KEY).build()
 application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
@@ -169,7 +193,7 @@ application.run_polling()
 # [Сделано] Добавить папку Prompts с выборами из Prompt-8b+RU|Prompt-4b-RU|Prompt-8b+EN|Prompt-4b-EN для больших и маленький РУ и АНГ моделей
 #   Добавить функцию/настройку, при включении которой через переводчик будет перевод и в настройках показывало на какой язык этот перевод (система язык пользователя -> английский для ИИ -> язык пользователя)
 #   Написать интерфейс на streamlit, чтобы через localhost следить за статусом ИИ
-#   Сделать поддержку линии мыслей (теперь я придумал как это сделать: запоминать последнии пять сообщений, добавляя их в history)
+# [EXP] Сделать поддержку линии мыслей (теперь я придумал как это сделать: запоминать последнии пять сообщений, добавляя их в history)
 # [Сделано] Удалить предыдущий TODO
 # [Сделано] Исправить readme.md
 # [Сделано] Добавить натсройку BotUsername = "TT_GrenTeaBot"
