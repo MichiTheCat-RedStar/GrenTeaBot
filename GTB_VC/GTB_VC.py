@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-GreenTea Bot v3.2 — main18
-Основано на main17, дополнительно:
+GreenTea Bot v3.2
+Основано на прошлой версии, дополнительно:
 1. Параметр thinking вынесен в settings.toml.
 2. Стандартные промпты:
    - GreenTea_v4_L — полный промпт, без изменений.
@@ -2287,7 +2287,7 @@ def main() -> None:
     global ADVANCED
 
     print_step("=" * 50)
-    print_step(f"  GreenTea Bot {VERSION} (main18)")
+    print_step(f"  GreenTea Bot {VERSION}")
     print_step("=" * 50)
 
     initialize_environment()
